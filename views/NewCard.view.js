@@ -3,7 +3,8 @@ import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import t from './../styles/forms';
 import colors from '../styles/colors';
-import { BtnPrimary, BtnPrimaryText } from '../styles/styles';
+import { Btn, BtnText } from '../styles/styles';
+import { numberToChar } from '../utils/string.helper';
 
 const CardContainer = styled.ScrollView`
   flex: 1;
@@ -34,7 +35,7 @@ for (let i = 0; i <= 5; i++) {
   const obj = {
     placeholder: 'Answer',
     placeholderTextColor: colors.placeholder,
-    error: '* Insert a valid answer',
+    error: '* At least two answers are required',
     multiline: true,
     stylesheet
   };
@@ -44,7 +45,7 @@ for (let i = 0; i <= 5; i++) {
       ...obj,
       label: 'Enter your question',
       placeholder: 'Your question',
-      error: '* Insert a valid question'
+      error: '* Question is required'
     };
   } else if (i === 1) {
     structObj[`answer${i}`] = t.String;
@@ -59,7 +60,7 @@ for (let i = 0; i <= 5; i++) {
 
     optionsObj[`answer${i}`] = {
       ...obj,
-      placeholder: `Answer ${String.fromCharCode('A'.charCodeAt(0) + (i - 1))}`
+      placeholder: `Answer ${numberToChar(i - 1)}`
     };
   }
 }
@@ -89,9 +90,9 @@ export default class NewCard extends React.Component {
           type={Card}
           options={formOptions}
         />
-        <BtnPrimary onPress={this.handleSubmit} style={{ marginBottom: 40 }}>
-          <BtnPrimaryText> Submit</BtnPrimaryText>
-        </BtnPrimary>
+        <Btn onPress={this.handleSubmit} style={{ marginBottom: 40 }}>
+          <BtnText> Submit</BtnText>
+        </Btn>
       </CardContainer>
     );
   }

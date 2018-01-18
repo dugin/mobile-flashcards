@@ -10,7 +10,7 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from './../styles/colors';
-import { BtnPrimary, BtnPrimaryText } from '../styles/styles';
+import { Btn, BtnText } from '../styles/styles';
 
 const { Form } = t.form;
 
@@ -31,7 +31,7 @@ const formOptions = {
       label: ' What is the title of your new deck?',
       placeholder: 'Deck Title',
       placeholderTextColor: colors.placeholder,
-      error: '* Insert a valid deck Title'
+      error: '* Deck Title is required'
     }
   }
 };
@@ -54,9 +54,9 @@ export default class NewDeck extends React.Component {
           type={Deck}
           options={formOptions}
         />
-        <BtnPrimary onPress={this.handleSubmit}>
-          <BtnPrimaryText> Submit</BtnPrimaryText>
-        </BtnPrimary>
+        <Btn onPress={this.handleSubmit}>
+          <BtnText> Submit</BtnText>
+        </Btn>
       </ViewContainer>
     );
   }

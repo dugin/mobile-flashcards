@@ -17,14 +17,12 @@ const ListItemSubTitle = styled.Text`
   background-color: transparent;
 `;
 
-const DeckTitle = ({ title, subtitle }) => {
-  return (
-    <View>
-      <ListItemTitle> {title} </ListItemTitle>
-      <ListItemSubTitle> {subtitle} </ListItemSubTitle>
-    </View>
-  );
-};
+const DeckTitle = ({ title, subtitle }) => (
+  <View>
+    <ListItemTitle> {title} </ListItemTitle>
+    <ListItemSubTitle> {subtitle} </ListItemSubTitle>
+  </View>
+);
 
 DeckTitle.propTypes = {
   title: PropTypes.string.isRequired,

@@ -3,40 +3,45 @@ import { Platform } from 'react-native';
 import { StackNavigator, TabNavigator } from 'react-navigation';
 import colors from './styles/colors';
 import Deck from './views/Deck.view';
-import DeckList from './views/Deck-list.view';
+import DeckList from './views/Deck-List.view';
 import NewDeck from './views/NewDeck.view';
 import { MaterialIcons } from '@expo/vector-icons';
 import NewCard from './views/NewCard.view';
+import Quiz from './views/Quiz.view';
 
+const sharedObj = {
+  tabBarLabel: 'Decks',
+  tabBarIcon: ({ tintColor }) => (
+    <MaterialIcons name="library-books" color={tintColor} size={30} />
+  )
+};
 const AppStackNavigator = StackNavigator(
   {
     DeckList: {
       screen: DeckList,
       navigationOptions: () => ({
         title: 'Decks',
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="library-books" color={tintColor} size={30} />
-        )
+        ...sharedObj
       })
     },
     Deck: {
       screen: Deck,
       navigationOptions: ({ navigation }) => ({
-        title: navigation.state.params.item.title,
-        tabBarLabel: 'Decks',
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="library-books" color={tintColor} size={30} />
-        )
+        ...sharedObj
       })
     },
     Card: {
       screen: NewCard,
       navigationOptions: () => ({
         title: 'New Card',
-        tabBarLabel: 'Decks',
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="library-books" color={tintColor} size={30} />
-        )
+        ...sharedObj
+      })
+    },
+    Quiz: {
+      screen: Quiz,
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.state.params.item.title,
+        ...sharedObj
       })
     }
   },
@@ -92,4 +97,10 @@ const AppTabNavigator = TabNavigator(
   }
 );
 
+export const ROUTES = {
+  DECKLIST: 'DeckList',
+  DECK: 'Deck',
+  CARD: 'Card',
+  QUIZ: 'Quiz'
+};
 export default AppTabNavigator;

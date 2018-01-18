@@ -1,8 +1,8 @@
 import React from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { MaterialIcons } from '@expo/vector-icons';
 import DeckTitle from '../components/Deck-Title.component';
+import { ROUTES } from '../routes';
 
 const ListItemContainer = styled.TouchableOpacity`
   border-bottom-width: 1px;
@@ -13,7 +13,7 @@ const ListItemContainer = styled.TouchableOpacity`
 
 export default class DeckList extends React.Component {
   onNavigate = item => {
-    this.props.navigation.navigate('Deck', { item });
+    this.props.navigation.navigate(ROUTES.DECK, { item });
   };
 
   renderItem = ({ item }) => (
@@ -25,7 +25,6 @@ export default class DeckList extends React.Component {
   render() {
     return (
       <FlatList
-        style={{ backgroundColor: 'transparent' }}
         data={[
           { title: 'UdaciCards', subtitle: '3 cards' },
           { title: 'New Deck', subtitle: '1 cards' },
