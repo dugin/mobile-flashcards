@@ -19,6 +19,14 @@ const QuestionText = styled.Text`
   text-align: center;
   margin: 10px 0 20px 0;
 `;
+const SeeAnswerBtn = styled.TouchableOpacity`
+  margin-bottom: 20px;
+`;
+
+const SeeAnswerBtnText = styled.Text`
+  color: ${colors.accent};
+  text-align: center;
+`;
 
 const ScrollViewContainer = styled.ScrollView`
   padding: 20px;
@@ -29,7 +37,7 @@ class Quiz extends React.Component {
     shouldShowAnswer: false,
     step: 0,
     reset: false,
-    rightAnswerAmount: 0
+    rightAnswerAmount: {}
   };
 
   onSelect = answer => {
@@ -38,9 +46,9 @@ class Quiz extends React.Component {
     this.setState(state => ({
       enableSubmit: true,
       reset: false,
-      rightAnswerAmount: cards[state.step].answers[answer].isCorrect
-        ? state.rightAnswerAmount + 1
-        : state.rightAnswerAmount
+      rightAnswerAmount: {
+        [state.step]: cards[state.step].answers[answer].isCorrect
+      }
     }));
   };
 
@@ -69,6 +77,7 @@ class Quiz extends React.Component {
       reset: true
     }));
   };
+
   render() {
     const {
       enableSubmit,
@@ -84,7 +93,13 @@ class Quiz extends React.Component {
         <Result
           navigation={navigation}
           onRestart={this.onRestartQuiz}
-          result={Math.round(rightAnswerAmount / cards.length * 100)}
+          result={Math.round(
+            Object.values(rightAnswerAmount).reduce(
+              (acc, r) => (r ? 1 : 0) + acc
+            ) /
+              cards.length *
+              100
+          )}
         />
       );
 
@@ -96,6 +111,22 @@ class Quiz extends React.Component {
         }}
       >
         <QuestionText>{cards[step].question}</QuestionText>
+        <SeeAnswerBtn>
+          <SeeAnswerBtnText
+            onPress={() =>
+              this.setState({
+                shouldShowAnswer: true,
+                enableSubmit: true,
+                reset: true,
+                rightAnswerAmount: {
+                  [step]: false
+                }
+              })
+            }
+          >
+            Show the answer
+          </SeeAnswerBtnText>
+        </SeeAnswerBtn>
         <QuizOptions
           options={cards[step].answers}
           shouldShowAnswer={shouldShowAnswer}
