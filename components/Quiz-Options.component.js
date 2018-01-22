@@ -38,9 +38,9 @@ const AnswerFeedbackText = styled.Text`
 export default class QuizOptions extends React.Component {
   state = { selected: '' };
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.shouldShowAnswer) this.setState({ selected: '' });
-  // }
+  componentWillReceiveProps(nexProps) {
+    if (nexProps.reset) this.setState({ selected: '' });
+  }
 
   onSelect = i => {
     this.setState(
@@ -74,7 +74,7 @@ export default class QuizOptions extends React.Component {
         {options.map((o, i) => (
           <TouchableWithoutFeedback
             disabled={shouldShowAnswer}
-            key={o.answer}
+            key={numberToChar(i)}
             onPress={() => this.onSelect(i)}
           >
             <QuizOptionItem
@@ -106,7 +106,7 @@ export default class QuizOptions extends React.Component {
           >
             {this.findCorrectAnswer() === selected
               ? 'You are right, congratulations!'
-              : `The correct answer was ${this.findCorrectAnswer()}`}
+              : `The correct answer is ${this.findCorrectAnswer()}`}
           </AnswerFeedbackText>
         )}
       </QuizOptionContainer>

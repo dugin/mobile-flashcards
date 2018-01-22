@@ -7,6 +7,7 @@ export const Btn = styled.TouchableOpacity`
   border-width: 1px;
   border-color: ${props => findColor(props, colors)};
   margin-top: 10px;
+  width: 100%;
 `;
 export const BtnText = styled.Text`
   background-color: ${props => findColor(props, colors)};
@@ -20,6 +21,7 @@ export const BtnAccentOutline = styled.TouchableOpacity`
   border-width: 1px;
   border-color: ${colors.accent};
   margin-top: 10px;
+  width: 100%;
 `;
 export const BtnAccentOutlineText = styled.Text`
   background-color: transparent;

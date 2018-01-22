@@ -1,44 +1,93 @@
 import React from 'react';
-import { TouchableOpacity, Text, View, ScrollView } from 'react-native';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import Result from '../components/Result.component';
+import Stepper from '../components/Stepper.component';
 import colors from '../styles/colors';
 import QuizOptions from '../components/Quiz-Options.component';
-import { Btn, BtnText } from '../styles/styles';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  Btn,
+  BtnAccentOutline,
+  BtnAccentOutlineText,
+  BtnText
+} from '../styles/styles';
 
 const QuestionText = styled.Text`
   color: ${colors.primary};
   font-size: 20px;
   text-align: center;
-  margin: 10px 0;
+  margin: 10px 0 20px 0;
 `;
 
 const ScrollViewContainer = styled.ScrollView`
-  padding: 0 20px;
+  padding: 20px;
 `;
-
-const PaginationText = styled.Text`
-  color: ${colors.primary};
-  text-align: center;
-  margin-top: 15px;
-  margin-bottom: -5px;
-`;
-
-export default class Quiz extends React.Component {
+class Quiz extends React.Component {
   state = {
     enableSubmit: false,
-    shouldShowAnswer: false
+    shouldShowAnswer: false,
+    step: 0,
+    reset: false,
+    rightAnswerAmount: 0
   };
 
   onSelect = answer => {
-    this.setState({ enableSubmit: true });
+    const { cards } = this.props;
+
+    this.setState(state => ({
+      enableSubmit: true,
+      reset: false,
+      rightAnswerAmount: cards[state.step].answers[answer].isCorrect
+        ? state.rightAnswerAmount + 1
+        : state.rightAnswerAmount
+    }));
+  };
+
+  onRestartQuiz = () => {
+    this.setState({
+      enableSubmit: false,
+      shouldShowAnswer: false,
+      step: 0,
+      reset: false,
+      rightAnswerAmount: 0
+    });
   };
 
   handleSubmit = () => {
-    this.setState(state => ({ shouldShowAnswer: !state.shouldShowAnswer }));
+    this.setState(state => ({
+      shouldShowAnswer: !state.shouldShowAnswer,
+      reset: false
+    }));
+  };
+
+  handleNext = () => {
+    this.setState(state => ({
+      step: state.step + 1,
+      enableSubmit: false,
+      shouldShowAnswer: false,
+      reset: true
+    }));
   };
   render() {
-    const { enableSubmit, shouldShowAnswer } = this.state;
+    const {
+      enableSubmit,
+      shouldShowAnswer,
+      step,
+      reset,
+      rightAnswerAmount
+    } = this.state;
+    const { cards, navigation } = this.props;
+
+    if (step === cards.length)
+      return (
+        <Result
+          navigation={navigation}
+          onRestart={this.onRestartQuiz}
+          result={Math.round(rightAnswerAmount / cards.length * 100)}
+        />
+      );
+
     return (
       <ScrollViewContainer
         innerRef={ref => (this.scrollView = ref)}
@@ -46,48 +95,46 @@ export default class Quiz extends React.Component {
           if (enableSubmit) this.scrollView.scrollToEnd({ animated: true });
         }}
       >
-        <QuestionText>
-          Vivamus suscipit tortor eget felis porttitor volutpat. Vestibulum ac
-          diam sit amet quam vehicula elementum sed sit amet dui. Cras ultricies
-          ligula sed magna dictum porta?
-        </QuestionText>
+        <QuestionText>{cards[step].question}</QuestionText>
         <QuizOptions
-          options={[
-            {
-              answer: `Donec sollicitudin molestie malesuada. Proin eget tortor risus. Quisque velit nisi, pretium ut lacinia in, elementum id enim.`
-            },
-            {
-              answer: `Cras ultricies ligula sed magna dictum porta. Proin eget tortor risus. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-              isCorrect: true
-            },
-            {
-              answer: `Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Donec sollicitudin molestie malesuada.`
-            },
-            {
-              answer: `Donec sollicitudin molestie malesuada. Curabitur aliquet quam id dui posuere blandit. Nulla quis lorem ut libero malesuada feugiat.`
-            },
-            {
-              answer: `Sed porttitor lectus nibh. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.`
-            }
-          ]}
+          options={cards[step].answers}
           shouldShowAnswer={shouldShowAnswer}
           onSelect={this.onSelect}
+          reset={reset}
         />
-        <PaginationText> 1 of 10 </PaginationText>
-        <MaterialCommunityIcons
-          style={{ textAlign: 'center' }}
-          name="dots-horizontal"
-          color="#fff"
-          size={30}
-        />
+        <Stepper step={step + 1} amount={cards.length} />
         <View style={{ marginBottom: !enableSubmit ? 40 : 10 }} />
 
-        {enableSubmit && (
-          <Btn accent onPress={this.handleSubmit} style={{ marginBottom: 20 }}>
-            <BtnText accent> {shouldShowAnswer ? 'Next' : 'Submit'}</BtnText>
-          </Btn>
-        )}
+        {enableSubmit &&
+          (!shouldShowAnswer ? (
+            <Btn
+              accent
+              onPress={this.handleSubmit}
+              style={{ marginBottom: 20 }}
+            >
+              <BtnText accent> Submit</BtnText>
+            </Btn>
+          ) : (
+            <BtnAccentOutline
+              accent
+              onPress={this.handleNext}
+              style={{ marginBottom: 20 }}
+            >
+              <BtnAccentOutlineText>Next</BtnAccentOutlineText>
+            </BtnAccentOutline>
+          ))}
       </ScrollViewContainer>
     );
   }
 }
+
+const mapStateToProps = (state, props) => {
+  const { decks } = state.deck;
+  const { title } = props.navigation.state.params.item;
+
+  return {
+    cards: decks[title].questions
+  };
+};
+
+export default connect(mapStateToProps)(Quiz);

@@ -1,15 +1,24 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity } from 'react-native';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  KeyboardAvoidingView
+} from 'react-native';
+import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
+import shuffle from 'lodash/shuffle';
 import styled from 'styled-components/native';
 import t from './../styles/forms';
 import colors from '../styles/colors';
 import { Btn, BtnText } from '../styles/styles';
 import { numberToChar } from '../utils/string.helper';
+import { addCard } from '../actions/deck.action';
 
 const CardContainer = styled.ScrollView`
   flex: 1;
   flex-direction: column;
-  padding: 20px;
+  padding: 30px 20px;
 `;
 
 const { Form } = t.form;
@@ -60,7 +69,9 @@ for (let i = 0; i <= 5; i++) {
 
     optionsObj[`answer${i}`] = {
       ...obj,
-      placeholder: `Answer ${numberToChar(i - 1)}`
+      placeholder: `Answer ${numberToChar(i - 1)} ${
+        i === 2 ? '' : '(optional)'
+      }`
     };
   }
 }
@@ -72,28 +83,55 @@ const formOptions = {
   fields: optionsObj
 };
 
-export default class NewCard extends React.Component {
+class NewCard extends React.Component {
+
   handleSubmit = () => {
     const value = this.form.getValue();
     if (value) {
-      console.log(value);
+      const { question, ...answers } = value;
+
+      const card = {
+        question,
+        answers: shuffle(
+          Object.values(answers)
+            .filter(a => a && a.length > 0)
+            .map((a, i) => ({ answer: a, isCorrect: i === 0 }))
+        )
+      };
+
+      this.addCard(card);
+      this.navigateBack();
     }
   };
+
+  navigateBack = () => {
+    this.props.navigation.dispatch(NavigationActions.back());
+  };
+
+  addCard(card) {
+    this.props.dispatch(
+      addCard(card, this.props.navigation.state.params.item.title)
+    );
+  }
 
   render() {
     return (
       <CardContainer>
-        <Form
-          ref={c => {
-            this.form = c;
-          }}
-          type={Card}
-          options={formOptions}
-        />
-        <Btn onPress={this.handleSubmit} style={{ marginBottom: 40 }}>
-          <BtnText> Submit</BtnText>
-        </Btn>
+        <KeyboardAvoidingView behavior="padding">
+          <Form
+            ref={c => {
+              this.form = c;
+            }}
+            type={Card}
+            options={formOptions}
+          />
+          <Btn onPress={this.handleSubmit} style={{ marginBottom: 40 }}>
+            <BtnText> Submit</BtnText>
+          </Btn>
+        </KeyboardAvoidingView>
       </CardContainer>
     );
   }
 }
+
+export default connect()(NewCard);

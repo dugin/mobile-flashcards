@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { StackNavigator, TabNavigator } from 'react-navigation';
+import { StackNavigator, TabNavigator, TabBarBottom } from 'react-navigation';
 import colors from './styles/colors';
 import Deck from './views/Deck.view';
 import DeckList from './views/Deck-List.view';
@@ -15,10 +15,19 @@ const sharedObj = {
     <MaterialIcons name="library-books" color={tintColor} size={30} />
   )
 };
+
+export const ROUTES = {
+  DECKLIST: 'DeckList',
+  DECK: 'Deck',
+  CARD: 'Card',
+  QUIZ: 'Quiz'
+};
+
 const AppStackNavigator = StackNavigator(
   {
     DeckList: {
       screen: DeckList,
+      key: ROUTES.DECKLIST,
       navigationOptions: () => ({
         title: 'Decks',
         ...sharedObj
@@ -26,12 +35,14 @@ const AppStackNavigator = StackNavigator(
     },
     Deck: {
       screen: Deck,
+      key: ROUTES.DECK,
       navigationOptions: ({ navigation }) => ({
         ...sharedObj
       })
     },
     Card: {
       screen: NewCard,
+      key: ROUTES.CARD,
       navigationOptions: () => ({
         title: 'New Card',
         ...sharedObj
@@ -39,6 +50,7 @@ const AppStackNavigator = StackNavigator(
     },
     Quiz: {
       screen: Quiz,
+      key: ROUTES.QUIZ,
       navigationOptions: ({ navigation }) => ({
         title: navigation.state.params.item.title,
         ...sharedObj
@@ -63,6 +75,7 @@ const AppStackNavigator = StackNavigator(
         top: 0,
         left: 0,
         right: 0,
+        marginTop: Platform.OS !== 'ios' ? -45 : 0,
         backgroundColor: 'transparent'
       },
       headerTintColor: colors.primary
@@ -93,14 +106,10 @@ const AppTabNavigator = TabNavigator(
       style: {
         backgroundColor: colors.background
       }
-    }
+    },
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom'
   }
 );
 
-export const ROUTES = {
-  DECKLIST: 'DeckList',
-  DECK: 'Deck',
-  CARD: 'Card',
-  QUIZ: 'Quiz'
-};
 export default AppTabNavigator;
