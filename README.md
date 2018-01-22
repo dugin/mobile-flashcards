@@ -1,7 +1,10 @@
 ## Overview
 
-This is the mobile flashcards project from the udacity react nanodegree. Tested with ios emulator and a real android device.
-I have improved the UX of the app and the quiz overall functionality.
+This is the mobile flashcards project from the udacity react nanodegree. I have improved the UX of the app and the quiz overall functionality.
+
+## Platforms
+Tested with ios emulator.
+Android sometimes the promises from AsyncStorage won't resolve . https://github.com/facebook/react-native/pull/16905
 
 ## Scripts to run the project
 
