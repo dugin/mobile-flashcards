@@ -4,11 +4,15 @@ This is the mobile flashcards project from the udacity react nanodegree. I have 
 
 ## Platforms
 Tested with ios emulator.
-Android sometimes the promises from AsyncStorage won't resolve . https://github.com/facebook/react-native/pull/16905
+Android sometimes the promises from AsyncStorage won't resolve. https://github.com/facebook/react-native/pull/16905
 
 ## Scripts to run the project
 
 If Yarn was installed when the project was initialized, then dependencies will have been installed via Yarn, and you should probably use it to run these commands as well. Unlike dependency installation, command running syntax is identical for Yarn and NPM at the time of this writing.
+
+
+### `npm install`
+To install all the app's dependencies.
 
 ### `npm start`
 

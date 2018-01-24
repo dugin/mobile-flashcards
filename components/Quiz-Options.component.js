@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import styled from 'styled-components/native';
 import colors from '../styles/colors';
 import { numberToChar } from '../utils/string.helper';
@@ -66,8 +66,10 @@ export default class QuizOptions extends React.Component {
   };
 
   render() {
-    const { options, shouldShowAnswer } = this.props;
+    const { options, shouldShowAnswer, version } = this.props;
     const { selected } = this.state;
+
+    if (version === 1 && !shouldShowAnswer) return <View />;
 
     return (
       <QuizOptionContainer>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import isEmpty from 'lodash/isEmpty';
 import styled from 'styled-components/native';
 import DeckTitle from '../components/Deck-Title.component';
 import {
@@ -10,10 +11,7 @@ import {
   BtnAccentOutlineText
 } from '../styles/styles';
 import { ROUTES } from '../routes';
-import {
-  clearLocalNotification,
-  setLocalNotification
-} from '../utils/notification.helper';
+
 
 const DeckContainer = styled.View`
   flex: 1;
@@ -28,8 +26,6 @@ class Deck extends React.Component {
   };
 
   onStartQuiz = deck => {
-    clearLocalNotification().then(setLocalNotification);
-
     this.onNavigate(ROUTES.QUIZ, deck);
   };
   render() {
@@ -59,11 +55,17 @@ const mapStateToProps = (state, props) => {
   const { title } = props.navigation.state.params.item;
 
   return {
-    deck: {
-      ...decks[title],
-      title,
-      subtitle: `${decks[title].questions.length} cards`
-    }
+    deck: decks[title]
+      ? {
+          ...decks[title],
+          title,
+          subtitle: `${decks[title].questions.length} cards`
+        }
+      : {
+          title: '',
+          subtitle: '',
+          questions: []
+        }
   };
 };
 

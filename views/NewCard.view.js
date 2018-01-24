@@ -44,12 +44,27 @@ for (let i = 0; i <= 5; i++) {
   const obj = {
     placeholder: 'Answer',
     placeholderTextColor: colors.placeholder,
-    error: '* At least two answers are required',
+    error: '* Answer is required',
     multiline: true,
     stylesheet
   };
   if (i === 0) {
+    structObj.version = t.maybe(
+      t.enums({
+        1: 'Version 1.0',
+        2: 'Version 2.0'
+      })
+    );
     structObj.question = t.String;
+
+    optionsObj.version = {
+      label: 'Quiz Version',
+      itemStyle: {
+        color: colors.primary
+      },
+      nullOption: { value: '1', text: 'Version 1.0' },
+      options: [{ value: '2', text: 'Version 2.0' }]
+    };
     optionsObj.question = {
       ...obj,
       label: 'Enter your question',
@@ -76,7 +91,12 @@ for (let i = 0; i <= 5; i++) {
   }
 }
 
-const Card = t.struct(structObj);
+const { answer2, answer3, answer4, answer5, ...rest } = structObj;
+
+const CardVersion1 = t.struct(rest);
+const CardVersion2 = t.struct(structObj);
+
+let Card = CardVersion1;
 
 const formOptions = {
   auto: 'none',
@@ -84,6 +104,34 @@ const formOptions = {
 };
 
 class NewCard extends React.Component {
+  state = { version: 1 };
+
+  onChangeForm = val => {
+    const { version } = this.state;
+    if (val.version) {
+      if (val.version === '2' && version === 1) {
+        Card = CardVersion2;
+        formOptions.fields.version.nullOption = {
+          value: '2',
+          text: 'Version 2.0'
+        };
+        formOptions.fields.version.options = [
+          { value: '1', text: 'Version 1.0' }
+        ];
+        this.setState({ version: 2 }, () => this.forceUpdate());
+      } else if (val.version === '1' && version === 2) {
+        Card = CardVersion1;
+        formOptions.fields.version.nullOption = {
+          value: '1',
+          text: 'Version 1.0'
+        };
+        formOptions.fields.version.options = [
+          { value: '2', text: 'Version 2.0' }
+        ];
+        this.setState({ version: 1 }, () => this.forceUpdate());
+      }
+    }
+  };
 
   handleSubmit = () => {
     const value = this.form.getValue();
@@ -92,6 +140,7 @@ class NewCard extends React.Component {
 
       const card = {
         question,
+        version: this.state.version,
         answers: shuffle(
           Object.values(answers)
             .filter(a => a && a.length > 0)
@@ -124,6 +173,7 @@ class NewCard extends React.Component {
             }}
             type={Card}
             options={formOptions}
+            onChange={this.onChangeForm}
           />
           <Btn onPress={this.handleSubmit} style={{ marginBottom: 40 }}>
             <BtnText> Submit</BtnText>

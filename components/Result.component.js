@@ -33,7 +33,7 @@ const Result = ({ result, navigation, onRestart }) => {
   return (
     <ResultsContainer>
       <TitleText> Congratulations, you have finished the Quiz. </TitleText>
-      <ResultText> Your final score is {result}! </ResultText>
+      <ResultText> Your final score is {result}%! </ResultText>
       <SimpleLineIcons name="emotsmile" color="#fff" size={70} />
       <Btn
         onPress={() => onRestart()}

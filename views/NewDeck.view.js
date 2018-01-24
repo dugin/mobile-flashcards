@@ -36,17 +36,20 @@ class NewDeck extends React.Component {
   handleSubmit = () => {
     const value = this.form.getValue();
     if (value) {
+      const deck = {
+        title: value.title,
+        questions: []
+      };
+
       this.props.dispatch(
         addDeck({
-          [value.title]: {
-            title: value.title,
-            questions: []
-          }
+          [value.title]: deck
         })
       );
 
+      this.onNavigate(deck);
+
       this.clearForms();
-      this.navigateHome();
     }
   };
 
@@ -54,13 +57,8 @@ class NewDeck extends React.Component {
     this.setState({ value: null });
   }
 
-  navigateHome() {
-    this.props.navigation.dispatch(
-      NavigationActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: ROUTES.DECKLIST })]
-      })
-    );
+  onNavigate(item) {
+    this.props.navigation.navigate(ROUTES.DECK, { item });
   }
 
   render() {

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import colors from './colors';
 
@@ -19,5 +20,7 @@ t.form.Form.stylesheet.checkbox.normal.flexDirection = 'row';
 t.form.Form.stylesheet.checkbox.error.flexDirection = 'row';
 t.form.Form.stylesheet.checkbox.normal.flex = 1;
 t.form.Form.stylesheet.checkbox.error.flex = 1;
+
+t.form.Form.stylesheet.pickerValue.normal.color = colors.primary;
 
 export default t;

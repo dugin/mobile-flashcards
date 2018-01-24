@@ -12,6 +12,10 @@ import {
   BtnAccentOutlineText,
   BtnText
 } from '../styles/styles';
+import {
+  clearLocalNotification,
+  setLocalNotification
+} from '../utils/notification.helper';
 
 const QuestionText = styled.Text`
   color: ${colors.primary};
@@ -19,6 +23,14 @@ const QuestionText = styled.Text`
   text-align: center;
   margin: 10px 0 20px 0;
 `;
+
+const V2Text = styled.Text`
+  color: ${colors.placeholder};
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+`;
+
 const SeeAnswerBtn = styled.TouchableOpacity`
   margin-bottom: 20px;
 `;
@@ -47,6 +59,7 @@ class Quiz extends React.Component {
       enableSubmit: true,
       reset: false,
       rightAnswerAmount: {
+        ...state.rightAnswerAmount,
         [state.step]: cards[state.step].answers[answer].isCorrect
       }
     }));
@@ -57,8 +70,8 @@ class Quiz extends React.Component {
       enableSubmit: false,
       shouldShowAnswer: false,
       step: 0,
-      reset: false,
-      rightAnswerAmount: 0
+      reset: true,
+      rightAnswerAmount: {}
     });
   };
 
@@ -78,6 +91,18 @@ class Quiz extends React.Component {
     }));
   };
 
+  handleCorrect = () => {
+    this.setState(
+      state => ({
+        rightAnswerAmount: {
+          ...state.rightAnswerAmount,
+          [state.step]: true
+        }
+      }),
+      this.handleNext
+    );
+  };
+
   render() {
     const {
       enableSubmit,
@@ -88,7 +113,9 @@ class Quiz extends React.Component {
     } = this.state;
     const { cards, navigation } = this.props;
 
-    if (step === cards.length)
+    if (step === cards.length) {
+      clearLocalNotification().then(setLocalNotification);
+
       return (
         <Result
           navigation={navigation}
@@ -102,6 +129,7 @@ class Quiz extends React.Component {
           )}
         />
       );
+    }
 
     return (
       <ScrollViewContainer
@@ -111,33 +139,53 @@ class Quiz extends React.Component {
         }}
       >
         <QuestionText>{cards[step].question}</QuestionText>
-        <SeeAnswerBtn>
-          <SeeAnswerBtnText
-            onPress={() =>
-              this.setState({
-                shouldShowAnswer: true,
-                enableSubmit: true,
-                reset: true,
-                rightAnswerAmount: {
-                  [step]: false
-                }
-              })
-            }
-          >
-            Show the answer
-          </SeeAnswerBtnText>
-        </SeeAnswerBtn>
+        {cards[step].version === 1 && (
+          <SeeAnswerBtn>
+            <SeeAnswerBtnText
+              onPress={() =>
+                this.setState(state => ({
+                  shouldShowAnswer: true,
+                  enableSubmit: true,
+                  reset: true,
+                  rightAnswerAmount: {
+                    ...state.rightAnswerAmount,
+                    [step]: false
+                  }
+                }))
+              }
+            >
+              Show the answer
+            </SeeAnswerBtnText>
+          </SeeAnswerBtn>
+        )}
+        {cards[step].version === 2 && (
+          <V2Text>* Quiz v2. Pick the right answer</V2Text>
+        )}
         <QuizOptions
           options={cards[step].answers}
           shouldShowAnswer={shouldShowAnswer}
           onSelect={this.onSelect}
           reset={reset}
+          version={cards[step].version}
         />
         <Stepper step={step + 1} amount={cards.length} />
         <View style={{ marginBottom: !enableSubmit ? 40 : 10 }} />
 
         {enableSubmit &&
-          (!shouldShowAnswer ? (
+          (cards[step].version === 1 ? (
+            <View>
+              <Btn onPress={this.handleCorrect} style={{ marginBottom: 10 }}>
+                <BtnText> Correct</BtnText>
+              </Btn>
+              <Btn
+                accent
+                onPress={this.handleNext}
+                style={{ marginBottom: 20 }}
+              >
+                <BtnText accent> Incorrect</BtnText>
+              </Btn>
+            </View>
+          ) : !shouldShowAnswer ? (
             <Btn
               accent
               onPress={this.handleSubmit}
