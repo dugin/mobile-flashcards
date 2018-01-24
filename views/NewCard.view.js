@@ -118,17 +118,11 @@ class NewCard extends React.Component {
         formOptions.fields.version.options = [
           { value: '1', text: 'Version 1.0' }
         ];
-        this.setState({ version: 2 }, () => this.forceUpdate());
+        this.setState({ version: 2, value: null });
+        this.forceUpdate();
       } else if (val.version === '1' && version === 2) {
-        Card = CardVersion1;
-        formOptions.fields.version.nullOption = {
-          value: '1',
-          text: 'Version 1.0'
-        };
-        formOptions.fields.version.options = [
-          { value: '2', text: 'Version 2.0' }
-        ];
-        this.setState({ version: 1 }, () => this.forceUpdate());
+        this.reset();
+        this.forceUpdate();
       }
     }
   };
@@ -149,8 +143,19 @@ class NewCard extends React.Component {
       };
 
       this.addCard(card);
+      this.reset();
       this.navigateBack();
     }
+  };
+
+  reset = () => {
+    formOptions.fields.version.nullOption = {
+      value: '1',
+      text: 'Version 1.0'
+    };
+    formOptions.fields.version.options = [{ value: '2', text: 'Version 2.0' }];
+    Card = CardVersion1;
+    this.setState({ version: 1, value: null });
   };
 
   navigateBack = () => {
