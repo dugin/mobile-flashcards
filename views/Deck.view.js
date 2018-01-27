@@ -12,7 +12,6 @@ import {
 } from '../styles/styles';
 import { ROUTES } from '../routes';
 
-
 const DeckContainer = styled.View`
   flex: 1;
   flex-direction: column;
@@ -55,17 +54,18 @@ const mapStateToProps = (state, props) => {
   const { title } = props.navigation.state.params.item;
 
   return {
-    deck: decks[title]
-      ? {
-          ...decks[title],
-          title,
-          subtitle: `${decks[title].questions.length} cards`
-        }
-      : {
-          title: '',
-          subtitle: '',
-          questions: []
-        }
+    deck:
+      decks && decks[title]
+        ? {
+            ...decks[title],
+            title,
+            subtitle: `${decks[title].questions.length} cards`
+          }
+        : {
+            title: '',
+            subtitle: '',
+            questions: []
+          }
   };
 };
 

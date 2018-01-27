@@ -64,13 +64,7 @@ class NewDeck extends React.Component {
   render() {
     return (
       <ViewContainer behavior="padding">
-        <Form
-          ref={c => {
-            this.form = c;
-          }}
-          type={Deck}
-          options={formOptions}
-        />
+        <Form ref={c => (this.form = c)} type={Deck} options={formOptions} />
         <Btn onPress={this.handleSubmit}>
           <BtnText> Create Deck</BtnText>
         </Btn>

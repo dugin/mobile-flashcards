@@ -173,9 +173,7 @@ class NewCard extends React.Component {
       <CardContainer>
         <KeyboardAvoidingView behavior="padding">
           <Form
-            ref={c => {
-              this.form = c;
-            }}
+            ref={c => (this.form = c)}
             type={Card}
             options={formOptions}
             onChange={this.onChangeForm}

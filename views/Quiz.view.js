@@ -83,12 +83,19 @@ class Quiz extends React.Component {
   };
 
   handleNext = () => {
-    this.setState(state => ({
-      step: state.step + 1,
-      enableSubmit: false,
-      shouldShowAnswer: false,
-      reset: true
-    }));
+    this.setState(
+      state => ({
+        step: state.step + 1,
+        enableSubmit: false,
+        shouldShowAnswer: false,
+        reset: true
+      }),
+      () => {
+        if (this.state.step === this.props.cards.length) {
+          clearLocalNotification().then(setLocalNotification);
+        }
+      }
+    );
   };
 
   handleCorrect = () => {
@@ -114,8 +121,6 @@ class Quiz extends React.Component {
     const { cards, navigation } = this.props;
 
     if (step === cards.length) {
-      clearLocalNotification().then(setLocalNotification);
-
       return (
         <Result
           navigation={navigation}
